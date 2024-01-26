@@ -1,0 +1,25 @@
+<launch>
+	<arg name="sub_customer_msg_topic_name"  default="/interactive_customer_service/message/customer" />
+	<arg name="pub_robot_msg_topic_name"     default="/interactive_customer_service/message/robot" />
+	<arg name="sub_robot_status_topic_name"  default="/interactive_customer_service/robot_status" />
+	
+	<arg name="sigverse_ros_bridge_port"   default="50001" />
+	<arg name="sync_time_num"              default="1" />
+	<arg name="ros_bridge_port"            default="9090" />
+
+	<node name="interactive_customer_service_sample" pkg="interactive_customer_service" type="interactive_customer_service_sample" output="screen" launch-prefix="gnome-terminal -t 'Sample' -e">
+
+		<param name="sub_customer_msg_topic_name"  type="string" value="$(arg sub_customer_msg_topic_name)" />
+		<param name="pub_robot_msg_topic_name"     type="string" value="$(arg pub_robot_msg_topic_name)" />
+		<param name="sub_robot_status_topic_name"  type="string" value="$(arg sub_robot_status_topic_name)" />
+	</node>
+
+	<group ns="sigverse_ros_bridge">
+		<node name="sigverse_ros_bridge" pkg="sigverse_ros_bridge" type="sigverse_ros_bridge" args="$(arg sigverse_ros_bridge_port) $(arg sync_time_num)"/>
+	</group>
+	
+	<include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch" > 
+		<arg name="port" value="$(arg ros_bridge_port)"/>
+	</include>
+</launch>
+
