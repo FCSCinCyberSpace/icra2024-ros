@@ -20,50 +20,51 @@ private:
     WaitForResult,
   };
 
-  const std::string MSG_ARE_YOU_READY    = "Are_you_ready?";
-  const std::string MSG_CUSTOMER_MESSAGE = "customer_message";
-  const std::string MSG_FAILED_TO_TAKE   = "Failed_to_take";
-  const std::string MSG_FAILED_TO_GIVE   = "Failed_to_give";
-  const std::string MSG_TASK_SUCCEEDED   = "Task_succeeded";
-  const std::string MSG_TASK_FAILED      = "Task_failed";
-  const std::string MSG_MISSION_COMPLETE = "Mission_complete";
-  const std::string MSG_YES              = "Yes";
-  const std::string MSG_NO               = "No";
-  const std::string MSG_I_DONT_KNOW      = "I don't know";
+  const std::string MSG_ARE_YOU_READY       = "Are_you_ready?";
+  const std::string MSG_CUSTOMER_MESSAGE    = "customer_message";
+  const std::string MSG_ROBOT_MSG_SUCCEEDED = "robot_message_succeeded";
+  const std::string MSG_ROBOT_MSG_FAILED    = "robot_message_failed";
+  const std::string MSG_TAKE_ITEM_SUCCEEDED = "take_item_succeeded";
+  const std::string MSG_TAKE_ITEM_FAILED    = "take_item_failed";
+  const std::string MSG_GIVE_ITEM_SUCCEEDED = "give_item_succeeded";
+  const std::string MSG_GIVE_ITEM_FAILED    = "give_item_failed";
+  const std::string MSG_TASK_SUCCEEDED      = "Task_succeeded";
+  const std::string MSG_TASK_FAILED         = "Task_failed";
+  const std::string MSG_MISSION_COMPLETE    = "Mission_complete";
+  const std::string MSG_YES                 = "Yes";
+  const std::string MSG_NO                  = "No";
+  const std::string MSG_I_DONT_KNOW         = "I don't know";
 
   const std::string MSG_I_AM_READY     = "I_am_ready";
   const std::string MSG_ROBOT_MESSAGE  = "robot_message";
-  const std::string MSG_TAKE_ITEM      = "Take_item";
-  const std::string MSG_GIVE_ITEM      = "Give_item";
+  const std::string MSG_TAKE_ITEM      = "take_item";
+  const std::string MSG_GIVE_ITEM      = "give_item";
   const std::string MSG_GIVE_UP        = "Give_up";
   
-  const std::string STATE_STANDBY          = "standby";
-  const std::string STATE_IN_CONVERSATION  = "in_conversation";
-  const std::string STATE_MOVING           = "moving";
+  const std::string STATE_STANDBY              = "standby";
+  const std::string STATE_IN_CONVERSATION      = "in_conversation";
+  const std::string STATE_MOVING               = "moving";
   
   int step_;
 
   std::string instruction_msg_;
   std::string customer_msg_;
   std::string robot_state_;
+  bool        speaking_;
   std::string grasped_item_;
 
   bool is_started_;
   bool is_succeeded_;
   bool is_failed_;
 
-  void init()
-  {
-    step_ = Initialize;
-
-    reset();
-  }
-
   void reset()
   {
+	ROS_INFO("Reset Parameters");
+	  
     instruction_msg_ = "";
     customer_msg_    = "";
     robot_state_     = "";
+    speaking_        = false;
     grasped_item_    = "";
     is_started_   = false;
     is_succeeded_ = false;
@@ -93,7 +94,7 @@ private:
         customer_msg_ = message->detail.c_str();
       }
     }
-    if(message->type.c_str()==MSG_FAILED_TO_TAKE || message->type.c_str()==MSG_FAILED_TO_GIVE)
+    if(message->type.c_str()==MSG_TAKE_ITEM_FAILED || message->type.c_str()==MSG_GIVE_ITEM_FAILED)
     {
       is_failed_ = true;
     }
@@ -113,15 +114,16 @@ private:
 
   void robotStatusCallback(const interactive_customer_service::RobotStatus::ConstPtr& status)
   {
-    ROS_INFO("Subscribe status:%s, %s", status->state.c_str(), status->grasped_item.c_str());
+    ROS_DEBUG("Subscribe robot status:%s, %d, %s", status->state.c_str(), status->speaking, status->grasped_item.c_str());
 
     robot_state_  = status->state.c_str();
+    speaking_     = status->speaking;
     grasped_item_ = status->grasped_item.c_str();
   }
 
   void sendMessage(ros::Publisher &publisher, const std::string &type, const std::string &detail="")
   {
-    ROS_INFO("Send message:%s", detail.c_str());
+    ROS_INFO("Send message:%s, %s", type.c_str(), detail.c_str());
 
     interactive_customer_service::Conversation message;
     message.type   = type;
@@ -145,8 +147,6 @@ public:
     node_handle.param<std::string>("pub_robot_msg_topic_name",    pub_robot_msg_topic_name,    "/interactive_customer_service/message/robot");
     node_handle.param<std::string>("sub_robot_status_topic_name", sub_robot_status_topic_name, "/interactive_customer_service/robot_status");
 
-    init();
-
     ros::Time waiting_start_time;
 
     ROS_INFO("Interactive Customer Service sample start!");
@@ -154,6 +154,9 @@ public:
     ros::Subscriber sub_msg   = node_handle.subscribe<interactive_customer_service::Conversation>(sub_customer_msg_topic_name, 100, &InteractiveCustomerServiceSample::messageCallback, this);
     ros::Publisher  pub_msg   = node_handle.advertise<interactive_customer_service::Conversation>(pub_robot_msg_topic_name, 10);
     ros::Subscriber sub_state = node_handle.subscribe<interactive_customer_service::RobotStatus >(sub_robot_status_topic_name, 100, &InteractiveCustomerServiceSample::robotStatusCallback, this);
+
+    reset();
+    step_ = Initialize;
 
     while (ros::ok())
     {
@@ -193,7 +196,7 @@ public:
         {
           if(instruction_msg_!="")
           {
-            ROS_INFO("%s", instruction_msg_.c_str());
+            ROS_INFO("Instruction: %s", instruction_msg_.c_str());
 
             step_++;
           }
@@ -201,9 +204,11 @@ public:
         }
         case SendMessage:
         {
-          sendMessage(pub_msg, MSG_ROBOT_MESSAGE, "There are two products. Is it 350 ml?");
-          step_++;
-
+		  if(robot_state_==STATE_IN_CONVERSATION)
+          {
+            sendMessage(pub_msg, MSG_ROBOT_MESSAGE, "There are several candidates. Is it blue?");
+            step_++;
+          }
           break;
         }
         case WaitForCustomerMessage:
@@ -217,15 +222,18 @@ public:
         }
         case TakeItem:
         {
-          if(customer_msg_==MSG_YES)
+          if(robot_state_==STATE_IN_CONVERSATION)
           {
-            sendMessage(pub_msg, MSG_TAKE_ITEM, "Coffee350ml");
-            step_++;
-          }
-          else
-          {
-            sendMessage(pub_msg, MSG_TAKE_ITEM, "Coffee500ml");
-            step_++;
+            if(customer_msg_==MSG_YES)
+            {
+              sendMessage(pub_msg, MSG_TAKE_ITEM, "xylitol_freshmint");
+              step_++;
+            }
+            else
+            {
+              sendMessage(pub_msg, MSG_TAKE_ITEM, "pie_no_mi");
+              step_++;
+            }			  
           }
 
           break;
