@@ -2,13 +2,13 @@
 
 # ROS packages for Competitions of Future Convenience Store Challenge.
 
-See also [wiki page](https://github.com/FutureConvenienceStoreChallengeVirtual/documents).
+See also [wiki page](https://github.com/FCSCinCyberSpace/documents).
 
 
 ## Prerequisites
 
 Same as below for OS and ROS version.  
-https://github.com/FutureConvenienceStoreChallengeVirtual/documents/blob/master/SoftwareManual/Environment.md#ubuntu-pc
+https://github.com/FCSCinCyberSpace/documents/blob/master/SoftwareManual/Environment.md#ubuntu-pc
 
 ## How to Install
 
@@ -26,7 +26,7 @@ https://github.com/SIGVerse/ros_package/tree/master/sigverse_ros_bridge
 
 ```bash:
 $ cd ~/catkin_ws/src
-$ git clone https://github.com/FutureConvenienceStoreChallengeVirtual/icra2024-ros.git
+$ git clone https://github.com/FCSCinCyberSpace/icra2024-ros.git
 $ cd ..
 $ catkin_make
 ```
