@@ -206,7 +206,7 @@ public:
         {
 		  if(robot_state_==STATE_IN_CONVERSATION)
           {
-            sendMessage(pub_msg, MSG_ROBOT_MESSAGE, "There are several candidates. Is it blue?");
+            sendMessage(pub_msg, MSG_ROBOT_MESSAGE, "There are several candidates. Is it green?");
             step_++;
           }
           break;
@@ -226,12 +226,12 @@ public:
           {
             if(customer_msg_==MSG_YES)
             {
-              sendMessage(pub_msg, MSG_TAKE_ITEM, "xylitol_freshmint");
+              sendMessage(pub_msg, MSG_TAKE_ITEM, "11_xylitol-1000");
               step_++;
             }
             else
             {
-              sendMessage(pub_msg, MSG_TAKE_ITEM, "pie_no_mi");
+              sendMessage(pub_msg, MSG_TAKE_ITEM, "chipstar_consomme-2000");
               step_++;
             }			  
           }
