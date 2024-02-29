@@ -41,6 +41,11 @@ This is a simple ROS node for the interactive customer service application.
 $ roslaunch interactive_customer_service sample.launch
 ```
 
+There is also a keyboard-operated sample ROS node for debugging.
+
+```bash:
+$ roslaunch interactive_customer_service teleop_key.launch 
+```
 
 ## License
 
