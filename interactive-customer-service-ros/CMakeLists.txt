@@ -15,7 +15,9 @@ find_package(catkin REQUIRED COMPONENTS
   trajectory_msgs
   tf
   message_generation
+  cv_bridge
 )
+find_package(OpenCV REQUIRED)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -109,7 +111,7 @@ generate_messages(
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES handyman_sample
-  CATKIN_DEPENDS roscpp rospy std_msgs message_runtime
+  CATKIN_DEPENDS roscpp rospy std_msgs message_runtime cv_bridge
 #  DEPENDS system_lib
 )
 
@@ -122,6 +124,7 @@ catkin_package(
 # include_directories(include)
 include_directories(
   ${catkin_INCLUDE_DIRS}
+  ${OpenCV_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
@@ -206,9 +209,9 @@ include_directories(include ${catkin_INCLUDE_DIRS})
 link_directories(/usr/local/lib)
 
 add_executable(interactive_customer_service_sample src/interactive_customer_service_sample.cpp)
-target_link_libraries(interactive_customer_service_sample ${catkin_LIBRARIES})
+target_link_libraries(interactive_customer_service_sample ${catkin_LIBRARIES} ${OpenCV_LIBS})
 add_dependencies(interactive_customer_service_sample ${PROJECT_NAME}_generate_messages_cpp)
 
 add_executable(teleop_key_ics src/teleop_key_ics.cpp)
-target_link_libraries(teleop_key_ics ${catkin_LIBRARIES})
+target_link_libraries(teleop_key_ics ${catkin_LIBRARIES} ${OpenCV_LIBS})
 add_dependencies(teleop_key_ics ${PROJECT_NAME}_generate_messages_cpp)

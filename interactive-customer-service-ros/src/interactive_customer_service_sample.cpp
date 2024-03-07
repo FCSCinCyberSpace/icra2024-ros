@@ -3,6 +3,8 @@
 #include <interactive_customer_service/Conversation.h>
 #include <interactive_customer_service/RobotStatus.h>
 #include <nodelet/nodelet.h>
+#include <opencv2/opencv.hpp>
+#include <cv_bridge/cv_bridge.h>
 
 class InteractiveCustomerServiceSample
 {
@@ -121,6 +123,32 @@ private:
     grasped_item_ = status->grasped_item.c_str();
   }
 
+  void customerImageCallback(const sensor_msgs::ImageConstPtr& image)
+  {
+    ROS_INFO("Subscribe Image");
+    
+    cv_bridge::CvImagePtr cv_ptr;
+    
+    try
+    {
+      cv_ptr = cv_bridge::toCvCopy(image, sensor_msgs::image_encodings::BGR8);
+
+      // Display Image
+      cv::Mat image_mat = cv_ptr->image;
+      cv::imshow("Customer Image", image_mat); 
+      cv::waitKey(3000);
+      cv::destroyAllWindows();
+
+      // Save the customer image to home directory
+      cv::imwrite("../CustomerImage.jpg", image_mat); // current path=/home/username/.ros
+    }
+    catch (cv_bridge::Exception& e)
+    {
+      ROS_ERROR("cv_bridge exception: %s", e.what());
+      return;
+    }
+  }
+
   void sendMessage(ros::Publisher &publisher, const std::string &type, const std::string &detail="")
   {
     ROS_INFO("Send message:%s, %s", type.c_str(), detail.c_str());
@@ -138,22 +166,15 @@ public:
     ros::NodeHandle node_handle;
 
     ros::Rate loop_rate(10);
-
-    std::string sub_customer_msg_topic_name;
-    std::string pub_robot_msg_topic_name;
-    std::string sub_robot_status_topic_name;
-
-    node_handle.param<std::string>("sub_customer_msg_topic_name", sub_customer_msg_topic_name, "/interactive_customer_service/message/customer");
-    node_handle.param<std::string>("pub_robot_msg_topic_name",    pub_robot_msg_topic_name,    "/interactive_customer_service/message/robot");
-    node_handle.param<std::string>("sub_robot_status_topic_name", sub_robot_status_topic_name, "/interactive_customer_service/robot_status");
-
+    
     ros::Time waiting_start_time;
 
     ROS_INFO("Interactive Customer Service sample start!");
 
-    ros::Subscriber sub_msg   = node_handle.subscribe<interactive_customer_service::Conversation>(sub_customer_msg_topic_name, 100, &InteractiveCustomerServiceSample::messageCallback, this);
-    ros::Publisher  pub_msg   = node_handle.advertise<interactive_customer_service::Conversation>(pub_robot_msg_topic_name, 10);
-    ros::Subscriber sub_state = node_handle.subscribe<interactive_customer_service::RobotStatus >(sub_robot_status_topic_name, 100, &InteractiveCustomerServiceSample::robotStatusCallback, this);
+    ros::Subscriber sub_msg   = node_handle.subscribe<interactive_customer_service::Conversation>("/interactive_customer_service/message/customer", 100, &InteractiveCustomerServiceSample::messageCallback, this);
+    ros::Publisher  pub_msg   = node_handle.advertise<interactive_customer_service::Conversation>("/interactive_customer_service/message/robot",     10);
+    ros::Subscriber sub_state = node_handle.subscribe<interactive_customer_service::RobotStatus >("/interactive_customer_service/robot_status",     100, &InteractiveCustomerServiceSample::robotStatusCallback, this);
+    ros::Subscriber sub_image = node_handle.subscribe<sensor_msgs::Image>                        ("/interactive_customer_service/customer_image",   100, &InteractiveCustomerServiceSample::customerImageCallback, this);
 
     reset();
     step_ = Initialize;
