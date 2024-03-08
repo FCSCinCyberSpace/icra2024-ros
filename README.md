@@ -17,11 +17,6 @@ https://github.com/FCSCinCyberSpace/documents/blob/master/SoftwareManual/Environ
 Please see below.  
 http://wiki.ros.org/rosbridge_suite
 
-### Install SIGVerse Rosbridge Server
-
-Please see below.  
-https://github.com/SIGVerse/ros_package/tree/master/sigverse_ros_bridge
-
 ### Install ROS Packages For Competitions
 
 ```bash:
