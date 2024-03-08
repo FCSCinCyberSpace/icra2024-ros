@@ -10,6 +10,9 @@ See also [wiki page](https://github.com/FCSCinCyberSpace/documents).
 Same as below for OS and ROS version.  
 https://github.com/FCSCinCyberSpace/documents/blob/master/SoftwareManual/Environment.md#ubuntu-pc
 
+The recommended ROS package is ros-noetic-desktop-full.  
+OpenCV is included and is required to run the sample programs.
+
 ## How to Install
 
 ### Install Rosbridge Server
