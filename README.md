@@ -1,8 +1,9 @@
-# ----- Under Construction -----
+# Interactive Customer Service
 
-# ROS packages for Competitions of Future Convenience Store Challenge.
+This is sample ROS package for Interactive Customer Service task.  
+The task is one of the competition tasks in "Future Convenience Store Challenge in Cyber Space".
 
-See also [wiki page](https://github.com/FCSCinCyberSpace/documents).
+Please refer to [the rulebook](https://github.com/FCSCinCyberSpace/documents) and [wiki](https://github.com/FCSCinCyberSpace/icra2024-unity/wiki) for details of the competition.
 
 
 ## Prerequisites
