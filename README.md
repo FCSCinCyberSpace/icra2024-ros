@@ -32,6 +32,9 @@ $ catkin_make
 
 ## How to Execute
 
+After running the ROS node, start the competition application.  
+See [icra2024-unity](https://github.com/FCSCinCyberSpace/icra2024-unity) for more information about the competition application.
+
 ### Run Sample ROS Node of Interactive Customer Service
 
 This is a simple ROS node for the interactive customer service application.
