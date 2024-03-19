@@ -34,6 +34,10 @@ private:
   const std::string MSG_GIVE_ITEM     = "give_item";
   const std::string MSG_GIVE_UP       = "Give_up";
   
+  const std::string OBJ1 = "11_xylitol-1000";
+  const std::string OBJ2 = "chipstar_consomme-2000";
+  const std::string OBJ3 = "irohasu-3000";
+  
   ros::Publisher pub_msg_;
   
   void showHelp()
@@ -44,9 +48,9 @@ private:
     puts( "1 : Send Message : 'There are several candidates. Is it green?'");
     puts( "2 : Send Message : 'Is it the bigger one?'");
     puts( "3 : Send Message : 'Is this what you want?'");
-    puts( "4 : Take '11_xylitol-1000'");
-    puts( "5 : Take 'chipstar_consomme-2000'");
-    puts( "6 : Take 'irohasu-3000'");
+    puts(("4 : Take "+OBJ1).c_str());
+    puts(("5 : Take "+OBJ2).c_str());
+    puts(("6 : Take "+OBJ3).c_str());
     puts( "7 : Give Item");
     puts(("9 : Send "+MSG_GIVE_UP).c_str());
     puts("---------------------------");
@@ -191,17 +195,17 @@ public:
           }
           case KEYCODE_4:
           {
-            sendMessage(pub_msg_, MSG_TAKE_ITEM, "11_xylitol-1000");
+            sendMessage(pub_msg_, MSG_TAKE_ITEM, OBJ1);
             break;
           }
           case KEYCODE_5:
           {
-            sendMessage(pub_msg_, MSG_TAKE_ITEM, "chipstar_consomme-2000");
+            sendMessage(pub_msg_, MSG_TAKE_ITEM, OBJ2);
             break;
           }
           case KEYCODE_6:
           {
-            sendMessage(pub_msg_, MSG_TAKE_ITEM, "irohasu-3000");
+            sendMessage(pub_msg_, MSG_TAKE_ITEM, OBJ3);
             break;
           }
           case KEYCODE_7:
