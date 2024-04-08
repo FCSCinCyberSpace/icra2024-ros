@@ -34,9 +34,11 @@ private:
   const std::string MSG_GIVE_ITEM     = "give_item";
   const std::string MSG_GIVE_UP       = "Give_up";
   
-  const std::string OBJ1 = "11_xylitol-1000";
-  const std::string OBJ2 = "chipstar_consomme-2000";
-  const std::string OBJ3 = "irohasu-3000";
+  const std::string OBJ1 = "pie_no_mi-1000";
+  const std::string OBJ2 = "11_xylitol-1000";
+  const std::string OBJ3 = "chipstar_consomme-2000";
+  const std::string OBJ4 = "irohasu-3000";
+  const std::string OBJ5 = "donbee_soba";
   
   ros::Publisher pub_msg_;
   
@@ -46,12 +48,13 @@ private:
     puts("---------------------------");
 //    puts(("0 : Send "+MSG_I_AM_READY).c_str());
     puts( "1 : Send Message : 'There are several candidates. Is it green?'");
-    puts( "2 : Send Message : 'Is it the bigger one?'");
-    puts( "3 : Send Message : 'Is this what you want?'");
-    puts(("4 : Take "+OBJ1).c_str());
-    puts(("5 : Take "+OBJ2).c_str());
-    puts(("6 : Take "+OBJ3).c_str());
-    puts( "7 : Give Item");
+    puts( "2 : Send Message : 'Is this what you want?'");
+    puts(("3 : Take "+OBJ1).c_str());
+    puts(("4 : Take "+OBJ2).c_str());
+    puts(("5 : Take "+OBJ3).c_str());
+    puts(("6 : Take "+OBJ4).c_str());
+    puts(("7 : Take "+OBJ5).c_str());
+    puts( "8 : Give Item");
     puts(("9 : Send "+MSG_GIVE_UP).c_str());
     puts("---------------------------");
   }
@@ -185,30 +188,35 @@ public:
           }
           case KEYCODE_2:
           {
-            sendMessage(pub_msg_, MSG_ROBOT_MESSAGE, "Is it the bigger one?");
+            sendMessage(pub_msg_, MSG_ROBOT_MESSAGE, "Is this what you want?");
             break;
           }
           case KEYCODE_3:
           {
-            sendMessage(pub_msg_, MSG_ROBOT_MESSAGE, "Is this what you want?");
+            sendMessage(pub_msg_, MSG_TAKE_ITEM, OBJ1);
             break;
           }
           case KEYCODE_4:
           {
-            sendMessage(pub_msg_, MSG_TAKE_ITEM, OBJ1);
+            sendMessage(pub_msg_, MSG_TAKE_ITEM, OBJ2);
             break;
           }
           case KEYCODE_5:
           {
-            sendMessage(pub_msg_, MSG_TAKE_ITEM, OBJ2);
+            sendMessage(pub_msg_, MSG_TAKE_ITEM, OBJ3);
             break;
           }
           case KEYCODE_6:
           {
-            sendMessage(pub_msg_, MSG_TAKE_ITEM, OBJ3);
+            sendMessage(pub_msg_, MSG_TAKE_ITEM, OBJ4);
             break;
           }
           case KEYCODE_7:
+          {
+            sendMessage(pub_msg_, MSG_TAKE_ITEM, OBJ5);
+            break;
+          }
+          case KEYCODE_8:
           {
             sendMessage(pub_msg_, MSG_GIVE_ITEM);
             break;
