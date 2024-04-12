@@ -215,3 +215,6 @@ add_dependencies(interactive_customer_service_sample ${PROJECT_NAME}_generate_me
 add_executable(teleop_key_ics src/teleop_key_ics.cpp)
 target_link_libraries(teleop_key_ics ${catkin_LIBRARIES} ${OpenCV_LIBS})
 add_dependencies(teleop_key_ics ${PROJECT_NAME}_generate_messages_cpp)
+
+add_executable(teleop_key_ics_input src/teleop_key_ics_input.cpp)
+target_link_libraries(teleop_key_ics_input ${catkin_LIBRARIES})
